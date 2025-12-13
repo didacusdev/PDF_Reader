@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>PDF Reader - Libro</title>
+
+		<!-- TailwindCSS v4 (Browser build) -->
+		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+		<!-- PDF.js se carga localmente desde node_modules vía index.js (ESM) -->
+
+		<style>
+			/* 3D helpers (Tailwind no cubre estas propiedades por defecto) */
+			.perspective-2000 {
+				perspective: 2000px;
+			}
+			.preserve-3d {
+				transform-style: preserve-3d;
+			}
+			.backface-hidden {
+				backface-visibility: hidden;
+				-webkit-backface-visibility: hidden;
+			}
+			.is-fullscreen #app {
+				max-width: none;
+			}
+			.is-fullscreen #topChrome,
+			.is-fullscreen #topControls {
+				display: none;
+			}
+			.is-fullscreen #fsToolbar {
+				display: flex;
+			}
+
+			/* Scrollbars delgados (visor y miniaturas) */
+			.scrollbar-slate {
+				scrollbar-width: thin;
+				scrollbar-color: rgb(71 85 105 / 0.85) rgb(2 6 23 / 0.6);
+			}
+			.scrollbar-slate::-webkit-scrollbar {
+				width: 8px;
+				height: 8px;
+			}
+			.scrollbar-slate::-webkit-scrollbar-track {
+				background: rgb(2 6 23 / 0.35);
+				border-radius: 9999px;
+			}
+			.scrollbar-slate::-webkit-scrollbar-thumb {
+				background: rgb(71 85 105 / 0.85);
+				border-radius: 9999px;
+				border: 2px solid rgb(2 6 23 / 0.35);
+			}
+			.scrollbar-slate::-webkit-scrollbar-thumb:hover {
+				background: rgb(100 116 139 / 0.9);
+			}
+
+			/* Evita overflow visual durante el flip (sin afectar el scroll del visor). */
+			#flipHost {
+				overflow: hidden;
+			}
+
+			/* Caras de cada hoja: front (PDF) + back (sin impresión) */
+			.pdf-page {
+				transform-style: preserve-3d;
+			}
+			.pdf-face {
+				position: absolute;
+				inset: 0;
+				backface-visibility: hidden;
+				-webkit-backface-visibility: hidden;
+			}
+			.pdf-front {
+				background: rgb(248 250 252);
+			}
+			.pdf-back {
+				/* Blanco cálido/beige muy sutil (reverso de papel sin impresión) */
+				background: rgb(250 247 240);
+				transform: rotateY(180deg);
+			}
+		</style>
+		<script type="module" crossorigin src="/assets/index-3zr4RdL5.js"></script>
+	</head>
+
+	<body class="min-h-dvh bg-slate-950 text-slate-100">
+		<div id="app" class="mx-auto flex h-dvh w-full max-w-6xl flex-col px-4 py-4">
+			<header id="topChrome" class="flex flex-col gap-2 pb-3">
+				<h1 class="text-xl font-semibold tracking-tight">Lector de PDF (modo libro)</h1>
+				<p class="text-sm text-slate-300">
+					Carga un PDF y pasa páginas una por una con efecto de libro.
+					<span class="text-slate-400">(Recomendado: abrir con un servidor local como “Live Server”.)</span>
+				</p>
+			</header>
+
+			<section id="topControls" class="flex flex-col gap-3 pb-3 sm:flex-row sm:items-end sm:justify-between">
+				<div class="flex flex-col gap-2">
+					<label class="text-sm font-medium text-slate-200" for="pdfInput">PDF</label>
+					<input
+						id="pdfInput"
+						type="file"
+						accept="application/pdf"
+						class="block w-full max-w-md cursor-pointer rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-200 file:mr-3 file:cursor-pointer file:rounded-md file:border-0 file:bg-slate-700 file:px-3 file:py-2 file:text-sm file:font-medium file:text-slate-100 hover:border-slate-600"
+					/>
+					<div id="status" class="text-xs text-slate-400">Sin documento cargado.</div>
+				</div>
+
+				<div class="flex flex-wrap items-center gap-2">
+					<button
+						id="sidebarBtn"
+						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100"
+						type="button"
+					>
+						Miniaturas
+					</button>
+
+					<button
+						id="prevBtn"
+						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+						disabled
+						type="button"
+					>
+						Anterior
+					</button>
+					<button
+						id="nextBtn"
+						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+						disabled
+						type="button"
+					>
+						Siguiente
+					</button>
+
+					<button
+						id="zoomOutBtn"
+						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+						disabled
+						type="button"
+					>
+						-
+					</button>
+					<div class="min-w-14 text-center text-sm text-slate-300">
+						<span id="zoomLabel">100%</span>
+					</div>
+					<button
+						id="zoomInBtn"
+						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+						disabled
+						type="button"
+					>
+						+
+					</button>
+
+					<button
+						id="fsBtn"
+						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100"
+						type="button"
+					>
+						Pantalla completa
+					</button>
+
+					<div class="ml-2 text-sm text-slate-300">
+						<span id="pageLabel">Página — / —</span>
+					</div>
+				</div>
+			</section>
+
+			<section class="flex min-h-0 flex-1 gap-3">
+				<aside
+					id="sidebar"
+					class="w-56 shrink-0 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40"
+				>
+					<div class="flex items-center justify-between border-b border-slate-800 px-3 py-2">
+						<div class="text-sm font-medium text-slate-200">Miniaturas</div>
+						<div class="text-xs text-slate-400" id="thumbStatus">—</div>
+					</div>
+					<div id="thumbs" class="scrollbar-slate h-full overflow-y-auto p-2"></div>
+				</aside>
+
+				<div class="min-h-0 flex-1">
+					<div class="h-full rounded-2xl border border-slate-800 bg-slate-900/40 p-3">
+						<div
+							id="book"
+							class="scrollbar-slate relative h-full w-full overflow-auto rounded-xl bg-slate-950 perspective-2000"
+							aria-label="Libro"
+						>
+							<!-- Toolbar lateral: aparece en fullscreen para no quitar alto útil -->
+							<div
+								id="fsToolbar"
+								class="absolute right-3 top-1/2 z-50 hidden -translate-y-1/2 flex-col gap-2"
+								aria-label="Controles"
+							>
+								<button
+									id="fsSidebarBtn"
+									type="button"
+									class="grid h-10 w-10 place-items-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 backdrop-blur disabled:opacity-40"
+									aria-label="Mostrar/ocultar miniaturas"
+								>
+									<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M4 5h6v6H4z" />
+										<path d="M4 13h6v6H4z" />
+										<path d="M12 5h8" />
+										<path d="M12 9h8" />
+										<path d="M12 15h8" />
+										<path d="M12 19h8" />
+									</svg>
+								</button>
+
+								<button
+									id="fsPrevBtn"
+									type="button"
+									class="grid h-10 w-10 place-items-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 backdrop-blur disabled:opacity-40"
+									aria-label="Página anterior"
+									disabled
+								>
+									<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M15 18l-6-6 6-6" />
+									</svg>
+								</button>
+
+								<button
+									id="fsNextBtn"
+									type="button"
+									class="grid h-10 w-10 place-items-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 backdrop-blur disabled:opacity-40"
+									aria-label="Página siguiente"
+									disabled
+								>
+									<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M9 6l6 6-6 6" />
+									</svg>
+								</button>
+
+								<button
+									id="fsZoomOutBtn"
+									type="button"
+									class="grid h-10 w-10 place-items-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 backdrop-blur disabled:opacity-40"
+									aria-label="Zoom out"
+									disabled
+								>
+									<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M11 11h6" />
+										<path d="M10 17a7 7 0 1 1 4-4" />
+										<path d="M21 21l-4.35-4.35" />
+									</svg>
+								</button>
+
+								<button
+									id="fsZoomInBtn"
+									type="button"
+									class="grid h-10 w-10 place-items-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 backdrop-blur disabled:opacity-40"
+									aria-label="Zoom in"
+									disabled
+								>
+									<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M11 11h6" />
+										<path d="M14 8v6" />
+										<path d="M10 17a7 7 0 1 1 4-4" />
+										<path d="M21 21l-4.35-4.35" />
+									</svg>
+								</button>
+
+								<button
+									id="fsExitBtn"
+									type="button"
+									class="grid h-10 w-10 place-items-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 backdrop-blur"
+									aria-label="Salir de pantalla completa"
+								>
+									<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+										<path d="M9 9L4 4" />
+										<path d="M4 8V4h4" />
+										<path d="M15 15l5 5" />
+										<path d="M20 16v4h-4" />
+									</svg>
+								</button>
+							</div>
+
+							<div id="bookInner" class="relative min-h-full min-w-full p-3">
+								<div class="flex min-h-full min-w-full items-center justify-center">
+									<!-- StPageFlip monta aquí el libro con efecto realista desde la esquina -->
+									<div id="flipHost"></div>
+								</div>
+							</div>
+
+							<div id="placeholder" class="absolute inset-0 grid place-items-center text-center">
+								<div class="px-6">
+									<div class="text-base font-medium text-slate-200">Carga un PDF para empezar</div>
+									<div class="mt-1 text-sm text-slate-400">Luego usa Anterior/Siguiente o las flechas ← →</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+	</body>
+</html>
