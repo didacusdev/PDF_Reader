@@ -4,8 +4,7 @@
   "description": "Lector de PDF",
   "main": "index.js",
   "scripts": {
-    "start": "serve -C",
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
