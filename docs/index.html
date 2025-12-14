@@ -7,8 +7,7 @@
 
 		<!-- TailwindCSS v4 (Browser build) -->
 		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-		<!-- PDF.js se carga localmente desde node_modules vía index.js (ESM) -->
+		<script type="module" crossorigin src="/PDF_Reader/assets/index-3zr4RdL5.js"></script>
 
 		<style>
 			/* 3D helpers (Tailwind no cubre estas propiedades por defecto) */
@@ -79,17 +78,13 @@
 				transform: rotateY(180deg);
 			}
 		</style>
-		<script type="module" crossorigin src="/assets/index-3zr4RdL5.js"></script>
 	</head>
 
 	<body class="min-h-dvh bg-slate-950 text-slate-100">
 		<div id="app" class="mx-auto flex h-dvh w-full max-w-6xl flex-col px-4 py-4">
 			<header id="topChrome" class="flex flex-col gap-2 pb-3">
 				<h1 class="text-xl font-semibold tracking-tight">Lector de PDF (modo libro)</h1>
-				<p class="text-sm text-slate-300">
-					Carga un PDF y pasa páginas una por una con efecto de libro.
-					<span class="text-slate-400">(Recomendado: abrir con un servidor local como “Live Server”.)</span>
-				</p>
+				<p class="text-sm text-slate-300">Carga un PDF y pasa páginas una por una con efecto de libro.</p>
 			</header>
 
 			<section id="topControls" class="flex flex-col gap-3 pb-3 sm:flex-row sm:items-end sm:justify-between">
@@ -291,6 +286,7 @@
 				</div>
 			</section>
 		</div>
-
+
+
 	</body>
 </html>
