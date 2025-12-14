@@ -44,6 +44,36 @@
 			.is-fullscreen #fsToolbar {
 				display: flex;
 			}
+			.is-fullscreen {
+				overflow: hidden;
+				height: 100dvh;
+			}
+
+			/* Fullscreen en mobile: botón flotante para desplegar el menú de acciones */
+			#fsMenuBtn {
+				display: none;
+			}
+			@media (max-width: 639px) {
+				.is-fullscreen #app {
+					height: 100dvh;
+					max-height: 100dvh;
+				}
+				.is-fullscreen #book {
+					height: 100%;
+				}
+				.is-fullscreen #fsMenuBtn {
+					display: grid;
+				}
+				.is-fullscreen #fsToolbar {
+					display: none;
+					top: auto;
+					bottom: 4.25rem;
+					transform: none;
+				}
+				.is-fullscreen.fs-menu-open #fsToolbar {
+					display: flex;
+				}
+			}
 
 			/* Scrollbars delgados (visor y miniaturas) */
 			.scrollbar-slate {
@@ -94,7 +124,7 @@
 	</head>
 
 	<body class="w-full min-h-dvh bg-slate-950 text-slate-100 relative">
-		<nav id="mainNav" class="w-full flex justify-between px-10 py-8 bg-slate-900/30 backdrop-blur-sm sticky top-0 left-0 z-50">
+		<nav id="mainNav" class="hidden w-full justify-between px-10 py-8 bg-slate-900/30 backdrop-blur-sm sticky top-0 left-0 z-50 sm:flex">
 			<div class="flex w-fit items-center gap-2">
 				<lord-icon class="block" src="https://cdn.lordicon.com/iuqyhlid.json" trigger="in" delay="1500" state="in-reveal" style="width:80;height:80">
 					<!-- Icono -->
@@ -154,29 +184,31 @@
 						Siguiente
 					</button>
 
-					<button
-						id="zoomOutBtn"
-						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-						disabled
-						type="button"
-					>
-						-
-					</button>
-					<div class="min-w-14 text-center text-sm text-slate-300">
-						<span id="zoomLabel">100%</span>
+					<div class="order-2 flex w-full items-center gap-2 sm:order-none sm:w-auto">
+						<button
+							id="zoomOutBtn"
+							class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+							disabled
+							type="button"
+						>
+							-
+						</button>
+						<div class="min-w-14 text-center text-sm text-slate-300">
+							<span id="zoomLabel">100%</span>
+						</div>
+						<button
+							id="zoomInBtn"
+							class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+							disabled
+							type="button"
+						>
+							+
+						</button>
 					</div>
-					<button
-						id="zoomInBtn"
-						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
-						disabled
-						type="button"
-					>
-						+
-					</button>
 
 					<button
 						id="fsBtn"
-						class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100"
+						class="hidden rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm font-medium text-slate-100 lg:inline-flex"
 						type="button"
 					>
 						Pantalla completa
@@ -207,6 +239,19 @@
 							class="scrollbar-slate relative h-full w-full overflow-auto rounded-xl bg-slate-950 perspective-2000"
 							aria-label="Libro"
 						>
+							<!-- Botón flotante (solo fullscreen mobile): despliega el menú de acciones -->
+							<button
+								id="fsMenuBtn"
+								type="button"
+								class="absolute bottom-3 right-3 z-50 grid h-9 w-9 place-items-center rounded-full border border-slate-700 bg-slate-900/80 text-slate-100 backdrop-blur"
+								aria-label="Mostrar/ocultar menú de acciones"
+								aria-expanded="false"
+							>
+								<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<path d="M14.7 6.3a4 4 0 0 0-5.66 5.66l-6.04 6.04 2.12 2.12 6.04-6.04a4 4 0 0 0 5.66-5.66l-1.41 1.41-2.12-2.12z" />
+								</svg>
+							</button>
+
 							<!-- Toolbar lateral: aparece en fullscreen para no quitar alto útil -->
 							<div
 								id="fsToolbar"

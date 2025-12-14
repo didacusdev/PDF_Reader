@@ -26,6 +26,12 @@ const fsNextBtn = document.getElementById('fsNextBtn');
 const fsZoomOutBtn = document.getElementById('fsZoomOutBtn');
 const fsZoomInBtn = document.getElementById('fsZoomInBtn');
 const fsExitBtn = document.getElementById('fsExitBtn');
+const fsMenuBtn = document.getElementById('fsMenuBtn');
+
+function setFsMenuOpen(isOpen) {
+  document.body.classList.toggle('fs-menu-open', isOpen);
+  if (fsMenuBtn) fsMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+}
 
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
@@ -91,6 +97,7 @@ function setUIState() {
   fsBtn.textContent = isFs ? 'Salir de pantalla completa' : 'Pantalla completa';
   document.body.classList.toggle('is-fullscreen', isFs);
   if (fsToolbar) fsToolbar.classList.toggle('hidden', !isFs);
+  if (!isFs) setFsMenuOpen(false);
 
   sidebar.classList.toggle('hidden', !sidebarOpen);
   if (isFs) {
@@ -545,8 +552,17 @@ if (fsExitBtn) {
   });
 }
 
+if (fsMenuBtn) {
+  fsMenuBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) return;
+    const isOpen = document.body.classList.toggle('fs-menu-open');
+    fsMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+}
+
 document.addEventListener('fullscreenchange', () => {
   const isFs = !!document.fullscreenElement;
+  setFsMenuOpen(false);
   fitMode = isFs ? 'height' : 'width';
   if (!isFs) sidebarOpen = restoreSidebarOpenAfterFs;
   setUIState();

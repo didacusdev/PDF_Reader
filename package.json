@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "vite",
+    "host": "vite --host",
     "build": "vite build",
     "preview": "vite preview"
   },
