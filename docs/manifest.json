@@ -1,0 +1,16 @@
+{
+  "name": "PDF Reader by DidacusDev",
+  "short_name": "PDF Reader",
+  "description": "Lector de PDF ligero y rápido",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/bookReader-CXs0Nt27.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
