@@ -14,8 +14,8 @@ function rewriteManifestIconsRawGithub() {
       resolved = config;
     },
     generateBundle(_options, bundle) {
-      const RAW_BASE =
-        'https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/';
+      const base = resolved?.base && typeof resolved.base === 'string' ? resolved.base : '/';
+      const iconBase = base.endsWith('/') ? base : `${base}/`;
 
       /**
        * @param {string} baseName
@@ -35,8 +35,10 @@ function rewriteManifestIconsRawGithub() {
 
       const iconSpecs = [
         { size: 100, baseName: 'ebook100.png' },
+        { size: 192, baseName: 'ebook192.png' },
         { size: 200, baseName: 'ebook200.png' },
         { size: 500, baseName: 'ebook500.png' },
+        { size: 512, baseName: 'ebook512.png' },
       ];
 
       const nextIcons = [];
@@ -52,7 +54,8 @@ function rewriteManifestIconsRawGithub() {
 
         const fileBase = emitted.split('/').pop();
         nextIcons.push({
-          src: `${RAW_BASE}${fileBase}`,
+          // Same-origin (GitHub Pages): p.ej. /PDF_Reader/assets/ebook512-XXXX.png
+          src: `${iconBase}${emitted}`,
           sizes: `${spec.size}x${spec.size}`,
           type: 'image/png',
           purpose: 'any',
@@ -66,7 +69,7 @@ function rewriteManifestIconsRawGithub() {
 
       const rootDir = resolved.root || process.cwd();
       const outDirAbs = path.resolve(rootDir, resolved.build.outDir || 'dist');
-      const sourceManifestPath = path.resolve(rootDir, 'manifest.json');
+      const sourceManifestPath = path.resolve(rootDir, 'public', 'manifest.json');
       const outManifestPath = path.resolve(outDirAbs, 'manifest.json');
 
       let manifestJson;
@@ -78,6 +81,14 @@ function rewriteManifestIconsRawGithub() {
 
       if (Array.isArray(icons) && icons.length) {
         manifestJson.icons = icons;
+      }
+
+      // Hace que el "Application ID" y el scope sean estables bajo GitHub Pages.
+      // En este repo, base es '/PDF_Reader/' (incluye el slash final).
+      if (typeof resolved.base === 'string' && resolved.base.startsWith('/')) {
+        manifestJson.id = resolved.base;
+        manifestJson.scope = resolved.base;
+        manifestJson.start_url = resolved.base;
       }
 
       fs.writeFileSync(outManifestPath, `${JSON.stringify(manifestJson, null, 2)}\n`);

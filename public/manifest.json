@@ -2,7 +2,9 @@
   "name": "PDF Reader by DidacusDev",
   "short_name": "PDF Reader",
   "description": "Lector de PDF ligero y rápido",
-  "start_url": "./index.html",
+  "id": ".",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1a1a1a",
@@ -10,6 +12,12 @@
     {
       "src": "./src/assets/ebook100.png",
       "sizes": "100x100",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./src/assets/ebook192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
@@ -22,6 +30,12 @@
     {
       "src": "./src/assets/ebook500.png",
       "sizes": "500x500",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./src/assets/ebook512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     }

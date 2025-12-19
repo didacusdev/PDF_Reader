@@ -2,26 +2,40 @@
   "name": "PDF Reader by DidacusDev",
   "short_name": "PDF Reader",
   "description": "Lector de PDF ligero y rápido",
-  "start_url": "./index.html",
+  "id": "/PDF_Reader/",
+  "start_url": "/PDF_Reader/",
+  "scope": "/PDF_Reader/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1a1a1a",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook100-CXs0Nt27.png",
+      "src": "/PDF_Reader/assets/ebook100-CXs0Nt27.png",
       "sizes": "100x100",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook200-DNcDw5zf.png",
+      "src": "/PDF_Reader/assets/ebook192-BjMkrDBn.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/PDF_Reader/assets/ebook200-DNcDw5zf.png",
       "sizes": "200x200",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook500-ERVMTJug.png",
+      "src": "/PDF_Reader/assets/ebook500-ERVMTJug.png",
       "sizes": "500x500",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/PDF_Reader/assets/ebook512-DjD8GFN6.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     }
