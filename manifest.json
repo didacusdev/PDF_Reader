@@ -8,17 +8,17 @@
   "theme_color": "#1a1a1a",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook100-CXs0Nt27.png",
+      "src": "./src/assets/ebook100.png",
       "sizes": "100x100",
       "type": "image/png"
     },
     {
-      "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook200-DNcDw5zf.png",
+      "src": "./src/assets/ebook200.png",
       "sizes": "200x200",
       "type": "image/png"
     },
     {
-      "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook500-ERVMTJug.png",
+      "src": "./src/assets/ebook500.png",
       "sizes": "500x500",
       "type": "image/png"
     }

@@ -2,6 +2,12 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf.min.mjs';
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import { PageFlip } from 'page-flip';
 
+// Fuerza a Vite/Rollup a emitir estos assets en el build (para poder referenciarlos desde el manifest).
+const pwaIcon100 = new URL('./assets/ebook100.png', import.meta.url).href;
+const pwaIcon200 = new URL('./assets/ebook200.png', import.meta.url).href;
+const pwaIcon500 = new URL('./assets/ebook500.png', import.meta.url).href;
+globalThis.__PWA_ICON_URLS__ = { pwaIcon100, pwaIcon200, pwaIcon500 };
+
 const pdfInput = document.getElementById('pdfInput');
 const statusEl = document.getElementById('status');
 const pageLabel = document.getElementById('pageLabel');
