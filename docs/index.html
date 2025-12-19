@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/png" href="/PDF_Reader/assets/bookReader-CXs0Nt27.png" sizes="32x32" />
 		<title>PDF Reader - Libro</title>
+		<link rel="manifest" href="manifest.json">
 		
 		<!-- Lordicon (iconos animados) -->
 		<script src="https://cdn.lordicon.com/lordicon.js"></script>
@@ -14,7 +15,8 @@
 		
 		<!-- PDF.js se carga localmente desde node_modules vía index.js (ESM) -->
 
-		<!-- Script principal -->
+		<!-- Script principal -->
+
 		<style>
 			/* 3D helpers (Tailwind no cubre estas propiedades por defecto) */
 			.perspective-2000 {
@@ -369,3 +371,4 @@
 		document.getElementById('year').textContent = new Date().getFullYear();
 	</script>
 </html>
+
