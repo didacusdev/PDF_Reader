@@ -55,6 +55,7 @@ function rewriteManifestIconsRawGithub() {
           src: `${RAW_BASE}${fileBase}`,
           sizes: `${spec.size}x${spec.size}`,
           type: 'image/png',
+          purpose: 'any',
         });
       }
 

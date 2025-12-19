@@ -10,17 +10,20 @@
     {
       "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook100-CXs0Nt27.png",
       "sizes": "100x100",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook200-DNcDw5zf.png",
       "sizes": "200x200",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "https://raw.githubusercontent.com/didacusdev/PDF_Reader/refs/heads/main/docs/assets/ebook500-ERVMTJug.png",
       "sizes": "500x500",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
